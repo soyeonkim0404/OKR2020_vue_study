@@ -3,13 +3,6 @@
     <h1>Todo It!</h1>
   </header>
 </template>
-
-<script>
-export default {
-
-}
-</script>
-
 <!--scoped:해당 파일 안에서만 적용되는 css-->
 <style scoped>
 h1{

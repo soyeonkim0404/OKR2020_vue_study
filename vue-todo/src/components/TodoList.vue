@@ -1,44 +1,27 @@
 <template>
   <div>
-    <ul>
-      <li v-for="(todoItem, index) in todoItems" v-bind:key="todoItem.item" class="shadow">
+    <transition-group name="list" tag="ul">
+      <li v-for="(todoItem, index) in this.$store.state.todoItems" v-bind:key="todoItem.item" class="shadow">
         <i class="fa fa-check checkBtn" v-bind:class="{checkBtnCompleted: todoItem.completed}" v-on:click="toggleComplete(todoItem, index)"></i>
         <span v-bind:class="{textCompleted: todoItem.completed}">{{ todoItem.item }}</span>
         <span class="removeBtn" v-on:click="removeTodo(todoItem, index)">
           <i class="fa fa-trash"></i>
         </span>
       </li>
-    </ul>
+    </transition-group>
   </div>
 </template>
 
 <script>
 export default {
-  data: function (){
-    return{
-      todoItems:[]
-    }
-  },
   methods:{
-    removeTodo:function (todoItem, index){
-      localStorage.removeItem(todoItem);
-      this.todoItems.splice(index, 1);
+    removeTodo(todoItem, index){
+      //this.$emit('removeItem', todoItem, index);
+      this.$store.commit('removeOneItem', {todoItem, index});
     },
-    toggleComplete:function (todoItem){
-      todoItem.completed = !todoItem.completed;
-      // 로컬 스토리지의 데이터를 갱신
-      localStorage.removeItem(todoItem.item);
-      localStorage.setItem(todoItem.item, JSON.stringify(todoItem))
-    }
-  },
-  created:function (){
-    if(localStorage.length > 0){
-      for(var i = 0; i < localStorage.length; i++){
-        if(localStorage.key(i) !== 'loglevel:webpack-dev-server'){
-          //this.todoItems.push(localStorage.key(i));
-          this.todoItems.push(JSON.parse(localStorage.getItem(localStorage.key(i))));
-        }
-      }
+    toggleComplete(todoItem, index){
+      //this.$emit('toggleItem', todoItem, index);
+      this.$store.commit('toggleOneItem', {todoItem, index});
     }
   }
 }
@@ -75,5 +58,13 @@ export default {
   .removeBtn{
     margin-left: auto;
     color:red;
+  }
+  /* 리스트 아이템 트랜지션 */
+  .list-enter-active, .list-leave-active {
+    transition: all 0.5s;
+  }
+  .list-enter, .list-leave-to /* .list-leave-active below version 2.1.8 */ {
+    opacity: 0;
+    transform: translateY(30px);
   }
 </style>
